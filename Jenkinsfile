@@ -6,5 +6,10 @@ pipeline {
         sh 'echo "bla"'
       }
     }
+    stage('hhh') {
+      steps {
+        sh 'python setup.py tests'
+      }
+    }
   }
 }
