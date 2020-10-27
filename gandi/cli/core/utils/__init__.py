@@ -338,8 +338,11 @@ def output_snapshot_profile(gandi, profile, output_keys, justify=13):
 def output_contact_info(gandi, data, output_keys, justify=10):
     """Helper to output chosen contacts info."""
     for key in output_keys:
-        if data[key]:
-            output_line(gandi, key, data[key]['handle'], justify)
+        if data.get(key):
+            if 'handle' in data[key]:
+                output_line(gandi, key, data[key]['handle'], justify)
+            else:
+                output_line(gandi, key, data[key], justify)
 
 
 def output_cert_oper(gandi, oper, justify=12):
@@ -533,7 +536,7 @@ def output_domain(gandi, domain, output_keys, justify=12):
     if 'expires' in output_keys:
         date_end = domain.get('date_registry_end')
         if date_end:
-            days_left = (date_end - datetime.now()).days
+            days_left = (datetime.strptime(date_end, '%Y-%m-%dT%H:%M:%SZ') - datetime.now()).days
         output_line(gandi, 'expires',
                     '%s (in %d days)' % (date_end, days_left),
                     justify)

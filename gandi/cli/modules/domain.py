@@ -30,7 +30,12 @@ class Domain(GandiModule):
     def info(cls, fqdn):
         """Display information about a domain."""
         if cls.get('apirest.key'):
-            return cls.json_get('%s/domains/%s' % (cls.api_url, fqdn))
+            ret = cls.json_get('%s/domains/%s' % (cls.api_url, fqdn))
+            ret['expires'] = ret['dates']['registry_ends_at']
+            ret['date_created'] = ret['dates']['created_at']
+            ret['date_registry_end'] = ret['dates']['registry_ends_at']
+            ret['date_updated'] = ret['dates']['updated_at']
+            return ret
 
         return cls.call('domain.info', fqdn)
 
