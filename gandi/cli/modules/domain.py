@@ -1,6 +1,7 @@
 """ Domain commands module. """
 
 import time
+import json
 
 from gandi.cli.core.base import GandiModule
 from gandi.cli.core.utils import DomainNotAvailable
@@ -98,13 +99,25 @@ class Domain(GandiModule):
 
         domain_info = cls.info(fqdn)
 
-        current_year = domain_info['date_registry_end'].year
+        try:
+            current_year = domain_info['date_registry_end'].year
+        except AttributeError:
+            current_year = False
+
         domain_params = {
             'duration': duration,
             'current_year': current_year,
         }
 
-        result = cls.call('domain.renew', fqdn, domain_params)
+        if cls.get('apirest.key'):
+            del domain_params['current_year']
+            result = cls.json_post('%s/domains/%s/renew' % (cls.api_url, fqdn),
+                                   data=json.dumps(domain_params))
+            if result:
+                result = result['message']
+        else:
+            result = cls.call('domain.renew', fqdn, domain_params)
+
         if background:
             return result
 
