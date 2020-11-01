@@ -67,7 +67,7 @@ def info(gandi, resource):
 @click.option('--extra_parameter', default=None, nargs=2,
               type=(unicode, unicode),
               help='Extra parameters', multiple=True)
-@click.option('--background', '--bg', default=False, is_flag=True,
+@click.option('--background', '--bg', default=True, is_flag=True,
               help='Run command in background mode (default=False).')
 @click.argument('resource', metavar='DOMAIN', required=False)
 @pass_gandi

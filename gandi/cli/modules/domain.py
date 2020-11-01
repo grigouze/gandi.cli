@@ -18,6 +18,7 @@ class Domain(GandiModule):
     """
 
     api_url = 'https://api.gandi.net/v5/domain'
+    orga_url = 'https://api.gandi.net/v5/organization'
 
     @classmethod
     def list(cls, options):
@@ -48,17 +49,39 @@ class Domain(GandiModule):
         if not background and not cls.intty():
             background = True
 
-        result = cls.call('domain.available', [fqdn])
-        while result[fqdn] == 'pending':
-            time.sleep(1)
+        if cls.get('apirest.key'):
+            ret = cls.json_get('%s/check?name=%s' % (cls.api_url, fqdn))
+            products = ret.get('products', [])
+            if len(products) > 0:
+                result = {fqdn: products[0].get('status', 'unavailable')}
+        else:
             result = cls.call('domain.available', [fqdn])
+            while result[fqdn] == 'pending':
+                time.sleep(1)
+                result = cls.call('domain.available', [fqdn])
 
         if result[fqdn] == 'unavailable':
             raise DomainNotAvailable('%s is not available' % fqdn)
 
-        # retrieve handle of user and save it to configuration
-        user_handle = cls.call('contact.info')['handle']
-        cls.configure(True, 'api.handle', user_handle)
+        if cls.get('apirest.key'):
+            user_handle = cls.json_get('%s/user-info' % (cls.orga_url))
+
+            del user_handle['id']
+            del user_handle['username']
+
+            user_handle['family'] = user_handle['lastname']
+            user_handle['given'] = user_handle['firstname']
+            del user_handle['lastname']
+            del user_handle['firstname']
+
+            del user_handle['name']
+            del user_handle['lang']
+
+            user_handle['type'] = 0
+        else:
+            # retrieve handle of user and save it to configuration
+            user_handle = cls.call('contact.info')['handle']
+            cls.configure(True, 'api.handle', user_handle)
 
         owner_ = owner or user_handle
         admin_ = admin or user_handle
@@ -81,7 +104,15 @@ class Domain(GandiModule):
             for extra in extra_parameter:
                 domain_params['extra'][extra[0]] = extra[1]
 
-        result = cls.call('domain.create', fqdn, domain_params)
+        if cls.get('apirest.key'):
+            domain_params['fqdn'] = fqdn
+            result = cls.json_post('%s/domains' % (cls.api_url),
+                                   data=json.dumps(domain_params))
+            if result:
+                result = result['message']
+        else:
+            result = cls.call('domain.create', fqdn, domain_params)
+
         if background:
             return result
 
