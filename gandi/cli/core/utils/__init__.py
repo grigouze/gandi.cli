@@ -536,7 +536,8 @@ def output_domain(gandi, domain, output_keys, justify=12):
     if 'expires' in output_keys:
         date_end = domain.get('date_registry_end')
         if date_end:
-            days_left = (datetime.strptime(date_end, '%Y-%m-%dT%H:%M:%SZ') - datetime.now()).days
+            days_left = (date_end - datetime.now()).days
+            # days_left = (datetime.strptime(date_end, '%Y-%m-%dT%H:%M:%SZ') - datetime.now()).days
         output_line(gandi, 'expires',
                     '%s (in %d days)' % (date_end, days_left),
                     justify)
