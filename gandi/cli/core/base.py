@@ -164,6 +164,11 @@ class GandiModule(GandiConfig):
         return cls.json_call('GET', url, **kwargs)
 
     @classmethod
+    def json_patch(cls, url, **kwargs):
+        """ Helper for PATCH json request """
+        return cls.json_call('PATCH', url, **kwargs)
+
+    @classmethod
     def json_post(cls, url, **kwargs):
         """ Helper for POST json request """
         return cls.json_call('POST', url, **kwargs)

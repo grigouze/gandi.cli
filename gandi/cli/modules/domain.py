@@ -162,6 +162,11 @@ class Domain(GandiModule):
         """Activate deautorenew"""
         fqdn = fqdn.lower()
 
+        if cls.get('apirest.key'):
+            return cls.json_patch('%s/domains/%s/autorenew'
+                                  % (cls.api_url, fqdn),
+                                  data=json.dumps({'enabled': False}))
+
         result = cls.call('domain.autorenew.deactivate', fqdn)
 
         return result
@@ -170,6 +175,11 @@ class Domain(GandiModule):
     def autorenew_activate(cls, fqdn):
         """Activate autorenew"""
         fqdn = fqdn.lower()
+
+        if cls.get('apirest.key'):
+            return cls.json_patch('%s/domains/%s/autorenew'
+                                  % (cls.api_url, fqdn),
+                                  data=json.dumps({'enabled': True}))
 
         result = cls.call('domain.autorenew.activate', fqdn)
 
