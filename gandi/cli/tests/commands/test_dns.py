@@ -1,6 +1,7 @@
 from ..compat import mock, ReasonableBytesIO
 from .base import CommandTestCase
 from gandi.cli.commands import dns
+from gandi.cli.core.base import GandiModule
 
 # disable SSL requests warning for tests
 import requests.packages.urllib3
@@ -167,6 +168,10 @@ www 10800 IN CNAME webredir.vip.gandi.net."""  # noqa
 
 
 class DnsTestCase(CommandTestCase):
+
+    def setUp(self):
+        super(DnsTestCase, self).setUp()
+        GandiModule._conffiles['global']['apirest'] = {'key': 'apikey002'}
 
     @mock.patch('gandi.cli.core.client.requests.request')
     def test_dns_domain_list(self, mock_request):
