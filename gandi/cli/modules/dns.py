@@ -20,7 +20,7 @@ class Dns(GandiModule):
 
     """
 
-    api_url = 'https://dns.api.gandi.net/api/v5'
+    api_url = 'https://api.gandi.net/v5/livedns'
 
     @classmethod
     def get_sort_url(cls, url, sort_by=None):
