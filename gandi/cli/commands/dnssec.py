@@ -40,13 +40,14 @@ def list(gandi, resource):
 
 
 @dnssec.command()
-@click.argument('resource', type=click.INT)
+@click.argument('resource')
+@click.argument('id', type=click.INT)
 @pass_gandi
-def delete(gandi, resource):
+def delete(gandi, resource, id):
     """Delete DNSSEC key.
     """
 
-    result = gandi.dnssec.delete(resource)
+    result = gandi.dnssec.delete(resource, id)
     gandi.echo('Delete successful.')
 
     return result

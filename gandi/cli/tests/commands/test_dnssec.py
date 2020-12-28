@@ -33,7 +33,7 @@ class DnssecTestCase(CommandTestCase):
 
     def test_delete(self):
 
-        result = self.invoke_with_exceptions(dnssec.delete, ['125'])
+        result = self.invoke_with_exceptions(dnssec.delete, ['iheartcli.com', '125'])
 
         self.assertEqual(result.output, """Delete successful.\n""")
         self.assertEqual(result.exit_code, 0)
