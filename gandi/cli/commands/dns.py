@@ -54,6 +54,10 @@ def list(gandi, fqdn, name, sort, type, rrset_type, text, sharing_id):
         gandi.echo(result)
         return result
 
+    if gandi.json_output:
+        gandi.pretty_json_echo(result)
+        return result
+
     for num, rec in enumerate(result):
         if type and rec['rrset_type'] != type:
             continue

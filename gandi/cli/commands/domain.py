@@ -27,8 +27,12 @@ def list(gandi, limit):
     """List domains."""
     options = {'items_per_page': limit}
     domains = gandi.domain.list(options)
-    for domain in domains:
-        gandi.echo(domain['fqdn'])
+
+    if gandi.json_output:
+        gandi.pretty_json_echo(domains)
+
+    else:
+        gandi.pretty_table(['domain'], ['fqdn'], domains)
 
     return domains
 
@@ -38,13 +42,16 @@ def list(gandi, limit):
 @pass_gandi
 def info(gandi, resource):
     """Display information about a domain."""
-    output_keys = ['fqdn', 'nameservers', 'services', 'zone_id', 'tags',
-                   'created', 'expires', 'updated']
+    output_keys = ['fqdn', 'nameservers', 'services', 'tags',
+                   'date_created', 'expires', 'date_updated']
     contact_field = ['owner', 'admin', 'bill', 'tech', 'reseller']
 
     result = gandi.domain.info(resource)
-    output_contact_info(gandi, result['contacts'], contact_field, justify=12)
-    output_domain(gandi, result, output_keys, justify=12)
+
+    if gandi.json_output:
+        gandi.pretty_json_echo(result)
+    else:
+        gandi.pretty_table_info(output_keys, output_keys, result)
 
     return result
 

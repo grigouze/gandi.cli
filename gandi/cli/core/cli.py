@@ -65,6 +65,14 @@ class GandiCLI(click.Group):
             ctx.obj['verbose'] = value
 
         @compatcallback
+        def set_json_output(ctx, param, value):
+            ctx.obj['json_output'] = value
+
+        @compatcallback
+        def set_colour_output(ctx, param, value):
+            ctx.obj['colour_output'] = value
+
+        @compatcallback
         def get_version(ctx, param, value):
             if value:
                 print(('Gandi CLI %s\n\n'
@@ -84,7 +92,13 @@ class GandiCLI(click.Group):
             click.Option(['--version'],
                          help='Display version.',
                          is_flag=True,
-                         default=False, callback=get_version)
+                         default=False, callback=get_version),
+            click.Option(['--json_output'],
+                         help='Output in json', is_flag=True,
+                         default=False, callback=set_json_output),
+            click.Option(['--colour_output'],
+                         help='Output in colour', is_flag=True,
+                         default=False, callback=set_colour_output),
 
         ])
 
@@ -159,7 +173,9 @@ class GandiCLI(click.Group):
 
     def invoke(self, ctx):
         """ Invoke command in context. """
-        ctx.obj = GandiContextHelper(verbose=ctx.obj['verbose'])
+        ctx.obj = GandiContextHelper(verbose=ctx.obj['verbose'],
+                                     json_output=ctx.obj['json_output'],
+                                     colour_output=ctx.obj['colour_output'])
         click.Group.invoke(self, ctx)
 
 

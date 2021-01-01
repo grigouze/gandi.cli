@@ -16,6 +16,11 @@ from subprocess import check_call, Popen, PIPE, CalledProcessError
 import click
 from click.exceptions import UsageError
 
+import json
+from rich.console import Console
+from rich.syntax import Syntax
+from rich.table import Table
+
 from .client import XMLRPCClient, APICallFailed, DryRunException, JsonClient
 from .conf import GandiConfig
 
@@ -210,6 +215,48 @@ class GandiModule(GandiConfig):
                 pprint(message)
 
     @classmethod
+    def pretty_json_echo(cls, message):
+        """ Display message using pretty print formatting for json. """
+        if cls.intty():
+            if message:
+                if cls.colour_output:
+                    result = json.dumps(message, sort_keys=True, indent=4)
+                    syntax = Syntax(result, "json", theme="native")
+                    console = Console()
+                    console.print(syntax)
+                else:
+                    print(message)
+
+    @classmethod
+    def pretty_table(cls, headers, names, values):
+        if cls.colour_output:
+            console = Console()
+            table = Table(show_header=True, header_style="bold magenta")
+            for header in headers:
+                table.add_column(header)
+
+            for value in values:
+                table.add_row(*{value[name]: 1 for name in names})
+            console.print(table)
+        else:
+            for value in values:
+                cls.echo(*{value[name]: 1 for name in names})
+
+    @classmethod
+    def pretty_table_info(cls, headers, names, values):
+        if cls.colour_output:
+            console = Console()
+            table = Table(show_header=True, header_style="bold magenta")
+            for header in headers:
+                table.add_column(header)
+
+            table.add_row(*{str(values[name]): 1 for name in names})
+            console.print(table)
+        else:
+            for value in values:
+                cls.echo(*{value[name]: 1 for name in names})
+
+    @classmethod
     def separator_line(cls, sep='-', size=10):
         """ Display a separator line. """
         if cls.intty():
@@ -362,9 +409,11 @@ class GandiContextHelper(GandiModule):
 
     _modules = {}
 
-    def __init__(self, verbose=-1):
+    def __init__(self, verbose=-1, json_output=-1, colour_output=-1):
         """ Initialize variables and api connection. """
         GandiModule.verbose = verbose
+        GandiModule.json_output = json_output
+        GandiModule.colour_output = colour_output
         GandiModule.load_config()
         # only load modules once
         if not self._modules:
