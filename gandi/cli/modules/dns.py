@@ -33,9 +33,14 @@ class Dns(GandiModule):
         return url
 
     @classmethod
-    def list(cls):
+    def list(cls, sharing_id=None):
         """List domains."""
-        return cls.json_get('%s/domains' % cls.api_url)
+        if sharing_id:
+            qs = '?sharing_id=%s' % sharing_id
+        else:
+            qs = ''
+
+        return cls.json_get('%s/domains%s' % (cls.api_url, qs))
 
     @classmethod
     def type_list(cls):

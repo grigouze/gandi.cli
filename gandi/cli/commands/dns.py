@@ -36,10 +36,11 @@ def domain_list(gandi):
               help='Filter results by type (does not work with text option).')
 @click.option('--text', default=False, is_flag=True,
               help='Output result as text.')
+@click.option('--sharing_id', default=None, help='Sharing ID')
 @pass_gandi
-def list(gandi, fqdn, name, sort, type, rrset_type, text):
+def list(gandi, fqdn, name, sort, type, rrset_type, text, sharing_id):
     """Display records for a domain."""
-    domains = gandi.dns.list()
+    domains = gandi.dns.list(sharing_id)
     domains = [domain['fqdn'] for domain in domains]
     if fqdn not in domains:
         gandi.echo('Sorry domain %s does not exist' % fqdn)
