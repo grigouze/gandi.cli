@@ -116,7 +116,7 @@ def output_account(gandi, account, output_keys, justify=17):
                              account['prepaid']['currency'])
         output_line(gandi, 'prepaid', prepaid, justify)
 
-    if 'credit' in output_keys:
+    if 'credit' in output_keys and 'credit' in account:
         output_line(gandi, 'credits', None, justify)
         available = account.get('credits')
         output_line(gandi, '        available', available, justify)

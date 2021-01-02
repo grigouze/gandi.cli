@@ -25,6 +25,9 @@ def info(gandi, sharing_id):
     if 'prepaid' not in account:
         account['prepaid_info'] = gandi.contact.balance().get('prepaid', {})
     
-    output_account(gandi, account, output_keys)
+    if gandi.json_output:
+        gandi.pretty_json_echo(account)
+    else:
+        output_account(gandi, account, output_keys)
     
     return account
