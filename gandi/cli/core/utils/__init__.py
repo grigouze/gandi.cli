@@ -107,9 +107,13 @@ def output_account(gandi, account, output_keys, justify=17):
     """ Helper to output an account information."""
     output_generic(gandi, account, output_keys, justify)
 
-    if 'prepaid' in output_keys:
+    if 'prepaid_info' in account:
         prepaid = '%s %s' % (account['prepaid_info']['amount'],
                              account['prepaid_info']['currency'])
+        output_line(gandi, 'prepaid', prepaid, justify)
+    elif 'prepaid' in account:
+        prepaid = '%s %s' % (account['prepaid']['amount'],
+                             account['prepaid']['currency'])
         output_line(gandi, 'prepaid', prepaid, justify)
 
     if 'credit' in output_keys:

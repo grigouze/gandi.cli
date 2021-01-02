@@ -19,6 +19,10 @@ def info(gandi):
     output_keys = ['handle', 'credit', 'prepaid']
 
     account = gandi.account.all()
-    account['prepaid_info'] = gandi.contact.balance().get('prepaid', {})
+    
+    if 'prepaid' not in account:
+        account['prepaid_info'] = gandi.contact.balance().get('prepaid', {})
+    
     output_account(gandi, account, output_keys)
+    
     return account

@@ -10,6 +10,8 @@ class Account(GandiModule):
     $ gandi account info
 
     """
+    
+    api_url = 'https://api.gandi.net/v5/billing'
 
     @classmethod
     def info(cls):
@@ -32,6 +34,10 @@ class Account(GandiModule):
     @classmethod
     def all(cls):
         """ Get all informations about this account """
+        
+        if cls.get('apirest.key'):
+            return cls.json_get('%s/info' % (cls.api_url))
+
         account = cls.info()
         creditusage = cls.creditusage()
 
