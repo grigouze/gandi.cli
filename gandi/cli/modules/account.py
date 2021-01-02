@@ -32,11 +32,16 @@ class Account(GandiModule):
         return sum(usage)
 
     @classmethod
-    def all(cls):
+    def all(cls, sharing_id):
         """ Get all informations about this account """
         
         if cls.get('apirest.key'):
-            return cls.json_get('%s/info' % (cls.api_url))
+            if sharing_id:
+                sharing_id = '/%s' % (sharing_id)
+            else:
+                sharing_id = ''
+
+            return cls.json_get('%s/info%s' % (cls.api_url, sharing_id))
 
         account = cls.info()
         creditusage = cls.creditusage()
